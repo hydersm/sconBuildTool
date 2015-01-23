@@ -1,0 +1,6 @@
+# Copyright 2014 The Ostrich / by Itamar O
+# pylint: disable=undefined-variable
+
+"""AddressBook Writer SConscript script"""
+
+Prog('writer', 'writer.cc', with_libs='AddressBook::addressbook')
