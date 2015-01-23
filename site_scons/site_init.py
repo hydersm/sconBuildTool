@@ -3,6 +3,7 @@
 
 """SCons site init script - automatically imported by SConstruct"""
 
+import ConfigParser
 import os
 from collections import defaultdict
 
@@ -12,6 +13,7 @@ from SCons.Errors import StopError
 
 from site_config import flavors, modules, ENV_OVERRIDES, ENV_EXTENSIONS
 from site_utils import listify, path_to_key, nop, sprint
+import numpy
 
 def get_base_env(*args, **kwargs):
     """Initialize and return a base construction environment.
@@ -19,9 +21,31 @@ def get_base_env(*args, **kwargs):
     All args received are passed transparently to SCons Environment init.
     """
     # Initialize new construction environment
-    env = Environment(*args, **kwargs) 
-    env.flavors = (set(flavors()).intersection(COMMAND_LINE_TARGETS)  # pylint: disable=undefined-variable
-                       or flavors())
+    env = Environment(*args, **kwargs)
+
+    config = ConfigParser.ConfigParser()
+
+    def configSectionMap(section):
+        dict1 = {}
+        options = config.options(section)
+        for option in options:
+            try:
+                dict1[option] = config.get(section, option)
+                if dict1[option] == -1:
+                    DebugPrint("skip: %s" % option)
+            except:
+                print("exception on %s!" % option)
+                dict1[option] = None
+        return dict1
+
+    config.read('site_scons/config.ini')
+    env.flavors = [configSectionMap('Environment')['flavor']]
+
+    if env.flavors not in numpy.array(list(flavors())):
+        print 'not in!'
+        env.flavors = (set(flavors()).intersection(COMMAND_LINE_TARGETS)  # pylint: disable=undefined-variable
+                           or flavors())
+
     # Perform base construction environment customizations from site_config
     if '_common' in ENV_OVERRIDES:
         env.Replace(**ENV_OVERRIDES['_common'])

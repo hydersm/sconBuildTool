@@ -3,6 +3,7 @@
 """General build-system utility functions."""
 
 import os
+import ConfigParser
 
 try:
     from SCons.Script import GetOption
