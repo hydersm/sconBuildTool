@@ -6,6 +6,7 @@
 OSTRICH_SCONS_HELP = """usage: scons [OPTION] [TARGET or FLAVOR_NAME] ...
 
 SCons Options:
+  --run                   Run the specified program
   -c, --clean, --remove       Remove specified targets and dependencies.
   -h, --help                  Print this one message and exit.
   -H, --help-options          Print SCons standard help message.
@@ -15,6 +16,12 @@ SCons Options:
   -s, --silent, --quiet       Don't print commands.
   -u, --up, --search-up       Search up directory tree for SConstruct,
                                 build targets at or below current directory.
+
+Note:
+If you find that you are repeatedly using the same options, then you can set
+the SCONSFLAGS environment variable. For example on the Mac:
+export SCONSFLAGS -j 8
+unset SCONSFLAGS 
 """
 
 if GetOption('help'):
